@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+
+<html lang="de">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Candlestick Chart Erstellung</title>
+<div class="container">
+<h2>Candlestick Chart Eingabe</h2>
+<table border="1">
+<thead>
+<tr>
+<th></th>
+<th>Candlestick 1</th>
+<th>Candlestick 2</th>
+<th>Candlestick 3</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>HIGH</td>
+<td><input id="high1" name="high1" type="number" value="140"/></td>
+<td><input id="high2" name="high2" type="number" value="150"/></td>
+<td><input id="high3" name="high3" type="number" value="160"/></td>
+</tr>
+<tr>
+<td>LOW</td>
+<td><input id="low1" name="low1" type="number" value="100"/></td>
+<td><input id="low2" name="low2" type="number" value="110"/></td>
+<td><input id="low3" name="low3" type="number" value="120"/></td>
+</tr>
+<tr>
+<td>OPEN</td>
+<td><input id="open1" name="open1" type="number" value="110"/></td>
+<td><input id="open2" name="open2" type="number" value="120"/></td>
+<td><input id="open3" name="open3" type="number" value="130"/></td>
+</tr>
+<tr>
+<td>CLOSE</td>
+<td><input id="close1" name="close1" type="number" value="130"/></td>
+<td><input id="close2" name="close2" type="number" value="140"/></td>
+<td><input id="close3" name="close3" type="number" value="150"/></td>
+</tr>
+</tbody>
+</table>
+<br/>
+<input onclick="drawChart()" type="button" value="Diagramm aktualisieren"/>
+</div>
+
+<script src="https://www.gstatic.com/charts/loader.js" type="text/javascript"></script>
+<script type="text/javascript">
+        google.charts.load('current', {'packages':['corechart']});
+
+        function drawChart() {
+            // Candlestick 1
+            let low1 = parseFloat(document.getElementById("low1").value) || 100;
+            let high1 = parseFloat(document.getElementById("high1").value) || 120;
+            let open1 = parseFloat(document.getElementById("open1").value) || 105;
+            let close1 = parseFloat(document.getElementById("close1").value) || 115;
+
+            // Candlestick 2
+            let low2 = parseFloat(document.getElementById("low2").value) || 110;
+            let high2 = parseFloat(document.getElementById("high2").value) || 130;
+            let open2 = parseFloat(document.getElementById("open2").value) || 115;
+            let close2 = parseFloat(document.getElementById("close2").value) || 125;
+
+            // Candlestick 3
+            let low3 = parseFloat(document.getElementById("low3").value) || 120;
+            let high3 = parseFloat(document.getElementById("high3").value) || 140;
+            let open3 = parseFloat(document.getElementById("open3").value) || 125;
+            let close3 = parseFloat(document.getElementById("close3").value) || 135;
+
+            let data = google.visualization.arrayToDataTable([
+                ['Zeitraum', 'Low', 'Opening', 'Closing', 'High'],
+                ['Candlestick 1', low1, open1, close1, high1],
+                ['Candlestick 2', low2, open2, close2, high2],
+                ['Candlestick 3', low3, open3, close3, high3]
+            ]);
+
+            let options = {
+                legend: 'none',
+                candlestick: {
+                    fallingColor: { strokeWidth: 0, fill: '#a52714' },
+                    risingColor: { strokeWidth: 0, fill: '#0f9d58' }
+                },
+                bar: { groupWidth: '25%' } // Reducing the width of the candlesticks
+            };
+
+            let chart = new google.visualization.CandlestickChart(document.getElementById('candlestick_chart_div'));
+            chart.draw(data, options);
+        }
+    </script>
+</head>
+<body onload="drawChart()">
+<h2>Candlestick Chart Eingabe</h2>
+<form id="candlestickForm">
+<!-- Candlestick 1 -->
+<h3>Candlestick 1</h3>
+<label for="low1">LOW:</label><br/>
+<input id="low1" name="low1" type="number" value="100"/><br/><br/>
+<label for="high1">HIGH:</label><br/>
+<input id="high1" name="high1" type="number" value="120"/><br/><br/>
+<label for="open1">OPEN:</label><br/>
+<input id="open1" name="open1" type="number" value="105"/><br/><br/>
+<label for="close1">CLOSE:</label><br/>
+<input id="close1" name="close1" type="number" value="115"/><br/><br/>
+<!-- Candlestick 2 -->
+<h3>Candlestick 2</h3>
+<label for="low2">LOW:</label><br/>
+<input id="low2" name="low2" type="number" value="110"/><br/><br/>
+<label for="high2">HIGH:</label><br/>
+<input id="high2" name="high2" type="number" value="130"/><br/><br/>
+<label for="open2">OPEN:</label><br/>
+<input id="open2" name="open2" type="number" value="115"/><br/><br/>
+<label for="close2">CLOSE:</label><br/>
+<input id="close2" name="close2" type="number" value="125"/><br/><br/>
+<!-- Candlestick 3 -->
+<h3>Candlestick 3</h3>
+<label for="low3">LOW:</label><br/>
+<input id="low3" name="low3" type="number" value="120"/><br/><br/>
+<label for="high3">HIGH:</label><br/>
+<input id="high3" name="high3" type="number" value="140"/><br/><br/>
+<label for="open3">OPEN:</label><br/>
+<input id="open3" name="open3" type="number" value="125"/><br/><br/>
+<label for="close3">CLOSE:</label><br/>
+<input id="close3" name="close3" type="number" value="135"/><br/><br/>
+<input onclick="drawChart()" type="button" value="Diagramm aktualisieren"/>
+</form>
+<h2>Candlestick Chart:</h2>
+<div id="candlestick_chart_div" style="width: 600px; height: 400px;"></div>
+</body>
+</html>
