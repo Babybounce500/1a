@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Auktionsverfahren</title>
+</head>
+<body>
+    <h1>COMMERCIUM Auktion</h1>
+
+    <div>
+        <label>Referenzkurs: <input type="number" id="referencePrice"></label>
+    </div>
+
+    <h2>Kauforders (Bids)</h2>
+    <div>
+        <label>ID: <input type="text" id="bidID"></label>
+        <label>Preis: <input type="number" id="bidPrice"></label>
+        <label>Volumen: <input type="number" id="bidVolume"></label>
+        <label>Datum & Uhrzeit: <input type="datetime-local" id="bidDateTime"></label>
+        <select id="bidType">
+            <option value="limit">Limit Order</option>
+            <option value="market">Market Order</option>
+        </select>
+        <button onclick="addBid()">Kauforder hinzufügen</button>
+    </div>
+    <ul id="bidsList"></ul>
+
+    <h2>Verkaufsorders (Asks)</h2>
+    <div>
+        <label>ID: <input type="text" id="askID"></label>
+        <label>Preis: <input type="number" id="askPrice"></label>
+        <label>Volumen: <input type="number" id="askVolume"></label>
+        <label>Datum & Uhrzeit: <input type="datetime-local" id="askDateTime"></label>
+        <select id="askType">
+            <option value="limit">Limit Order</option>
+            <option value="market">Market Order</option>
+        </select>
+        <button onclick="addAsk()">Verkaufsorder hinzufügen</button>
+    </div>
+    <ul id="asksList"></ul>
+
+    <button onclick="calculateClearingPrice()">Clearing-Preis und gehandelte Stückzahl berechnen</button>
+    <p>Clearing-Preis: <span id="result">-</span></p>
+    <p>Gehandelte Stückzahl: <span id="tradedVolume">-</span></p>
+
+    <script>
+        let bids = [];
+        let asks = [];
+
+        function addBid() {
+            const id = document.getElementById('bidID').value;
+            const price = parseFloat(document.getElementById('bidPrice').value);
+            const volume = parseFloat(document.getElementById('bidVolume').value);
+            const datetime = new Date(document.getElementById('bidDateTime').value);
+            const type = document.getElementById('bidType').value;
+            bids.push({id, price, volume, datetime, type});
+            updateList('bidsList', bids);
+        }
+
+        function addAsk() {
+            const id = document.getElementById('askID').value;
+            const price = parseFloat(document.getElementById('askPrice').value);
+            const volume = parseFloat(document.getElementById('askVolume').value);
+            const datetime = new Date(document.getElementById('askDateTime').value);
+            const type = document.getElementById('askType').value;
+            asks.push({id, price, volume, datetime, type});
+            updateList('asksList', asks);
+        }
+
+        function updateList(elementId, orders) {
+            const listElement = document.getElementById(elementId);
+            listElement.innerHTML = '';
+            orders.sort((a, b) => a.datetime - b.datetime);  // Sortieren nach "First In, First Out" (FIFO)
+            orders.forEach(order => {
+                listElement.innerHTML += `<li>${order.type.toUpperCase()}: ID ${order.id}, Preis ${order.price}, Volumen ${order.volume}, Datum & Uhrzeit ${order.datetime.toLocaleString()}</li>`;
+            });
+        }
+
+        function calculateClearingPrice() {
+            const result = combinedClearingPriceCorrected(bids, asks);
+            document.getElementById('result').innerText = result.clearingPrice;
+            document.getElementById('tradedVolume').innerText = result.tradedVolume;
+            updateList('bidsList', bids);  // Aktualisieren der Listen, um nur offene Orders zu zeigen
+            updateList('asksList', asks);
+        }
+
+        function combinedClearingPriceCorrected(bids, asks) {
+            bids = bids.sort((a, b) => (a.type === 'limit' ? a.price : -Infinity) - (b.type === 'limit' ? b.price : -Infinity)).reverse();
+            asks = asks.sort((a, b) => (a.type === 'limit' ? a.price : Infinity) - (b.type === 'limit' ? b.price : Infinity));
+
+            let tradedVolume = 0;
+            let lastTradePrice = null;
+
+            while (bids.length > 0 && asks.length > 0) {
+                let bid = bids[0];
+                let ask = asks[0];
+
+                if (bid.type === 'market' && ask.type === 'market') {
+                    lastTradePrice = parseFloat(document.getElementById('referencePrice').value);
+                    let volumeToTrade = Math.min(bid.volume, ask.volume);
+                    tradedVolume += volumeToTrade;
+
+                    bid.volume -= volumeToTrade;
+                    ask.volume -= volumeToTrade;
+
+                    if (bid.volume === 0) bids.shift();
+                    if (ask.volume === 0) asks.shift();
+
+                } else if (bid.type === 'market' || ask.type === 'market' || bid.price >= ask.price) {
+                    let volumeToTrade = Math.min(bid.volume, ask.volume);
+                    tradedVolume += volumeToTrade;
+
+                    lastTradePrice = bid.type === 'market' ? ask.price : ask.type === 'market' ? bid.price : (bid.price + ask.price) / 2;
+
+                    bid.volume -= volumeToTrade;
+                    ask.volume -= volumeToTrade;
+
+                    if (bid.volume === 0) bids.shift();
+                    if (ask.volume === 0) asks.shift();
+                } else {
+                    break;
+                }
+            }
+
+            return {clearingPrice: lastTradePrice, tradedVolume};
+        }
+    </script>
+</body>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NFT Auktion</title>
+</head>
+<body>
+    <h1>NFT Auktion</h1>
+
+    <!-- Auktionsdetails festlegen -->
+    <h2>Auktionsdetails festlegen</h2>
+    <div>
+        <label>Startpreis (ETH): <input type="number" id="startPrice" value="0.1"></label>
+        <label>Mindestpreis (ETH): <input type="number" id="reservePrice" value="1"></label>
+        <label>Auktionsschluss (Datum & Uhrzeit): <input type="datetime-local" id="auctionEndTime"></label>
+        <button onclick="startAuction()">Auktion starten</button>
+    </div>
+
+    <!-- Bieten -->
+    <h2>Bieten</h2>
+    <div id="biddingSection" style="display: none;">
+        <label>ID: <input type="text" id="bidderID"></label>
+        <label>Ihr Gebot (ETH): <input type="number" id="userBid"></label>
+        <label>Datum & Uhrzeit: <input type="datetime-local" id="bidDateTime"></label>
+        <button onclick="placeBid()">Gebot abgeben</button>
+    </div>
+    <table>
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Gebot (ETH)</th>
+                <th>Datum & Uhrzeit</th>
+            </tr>
+        </thead>
+        <tbody id="bidsTable">
+            <!-- Gebote werden hier angezeigt -->
+        </tbody>
+    </table>
+
+    <!-- Ende der Auktion -->
+    <button onclick="endAuction()" id="endAuctionButton" style="display: none;">Auktion beenden</button>
+    <p id="auctionResult"></p>
+
+    <script>
+        let db;
+        let highestBid = 0;
+        let reservePrice = 0;
+        let auctionEndTime;
+
+        // Datenbank initialisieren
+        const request = indexedDB.open("AuctionDB", 1);
+        request.onerror = function(event) {
+            console.error("Cannot open IndexedDB:", event);
+        };
+        request.onsuccess = function(event) {
+            db = event.target.result;
+            fetchHighestBid();
+        };
+        request.onupgradeneeded = function(event) {
+            const db = event.target.result;
+            if (!db.objectStoreNames.contains('bids')) {
+                db.createObjectStore('bids', { keyPath: 'id', autoIncrement: true });
+            }
+        };
+
+        function startAuction() {
+            reservePrice = parseFloat(document.getElementById('reservePrice').value);
+            auctionEndTime = new Date(document.getElementById('auctionEndTime').value);
+            document.getElementById('biddingSection').style.display = 'block';
+            document.getElementById('endAuctionButton').style.display = 'block';
+            
+            // Timer, um die Auktion automatisch zu beenden
+            setTimeout(() => {
+                endAuction();
+            }, auctionEndTime - new Date());
+        }
+
+        function placeBid() {
+            const userBid = parseFloat(document.getElementById('userBid').value);
+            const bidderID = document.getElementById('bidderID').value;
+            const bidDateTime = document.getElementById('bidDateTime').value;
+            if (userBid > highestBid) {
+                highestBid = userBid;
+                // Gebot in der Datenbank speichern
+                const bid = {
+                    amount: highestBid,
+                    bidderID: bidderID,
+                    dateTime: bidDateTime
+                };
+                const transaction = db.transaction(["bids"], "readwrite");
+                const objectStore = transaction.objectStore("bids");
+                objectStore.add(bid);
+                fetchHighestBid();
+            } else {
+                alert('Ihr Gebot muss höher sein als das aktuelle Höchstgebot!');
+            }
+        }
+
+        function fetchHighestBid() {
+            const transaction = db.transaction(["bids"], "readonly");
+            const objectStore = transaction.objectStore("bids");
+            const request = objectStore.getAll();
+            request.onsuccess = function(event) {
+                const bids = event.target.result;
+                if (bids.length > 0) {
+                    const highestBidEntry = bids.reduce((prev, curr) => curr.amount > prev.amount ? curr : prev);
+                    document.getElementById('bidsTable').innerHTML = `<tr><td>${highestBidEntry.bidderID}</td><td>${highestBidEntry.amount}</td><td>${highestBidEntry.dateTime}</td></tr>`;
+                }
+            };
+        }
+
+        function endAuction() {
+            if (highestBid >= reservePrice) {
+                document.getElementById('auctionResult').innerText = `Das Kunstwerk wurde für ${highestBid} ETH verkauft!`;
+            } else {
+                document.getElementById('auctionResult').innerText = `Das Mindestgebot von ${reservePrice} ETH wurde nicht erreicht. Das Kunstwerk wurde nicht verkauft.`;
+            }
+            document.getElementById('biddingSection').style.display = 'none';
+            document.getElementById('endAuctionButton').style.display = 'none';
+        }
+    </script>
+</body>
+</html>
