@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Liquiditätsrechner</title>
+</head>
+<body>
+
+<h2>Liquiditätsrechner für Orderbuch</h2>
+
+<h3>Market Orders</h3>
+<label for="market_long">Stücke LONG:</label>
+<input type="number" id="market_long" placeholder="Stückzahl LONG eingeben">
+<br>
+<label for="market_short">Stücke SHORT:</label>
+<input type="number" id="market_short" placeholder="Stückzahl SHORT eingeben">
+<br><br>
+
+<h3>Limit Orders (Durchschnitt)</h3>
+<label for="limit_long">Durchschnittliche Stücke LONG:</label>
+<input type="number" id="limit_long" placeholder="Stückzahl LONG eingeben">
+<br>
+<label for="limit_short">Durchschnittliche Stücke SHORT:</label>
+<input type="number" id="limit_short" placeholder="Stückzahl SHORT eingeben">
+<br><br>
+
+<button onclick="calculate()">Berechnen</button>
+<br><br>
+
+<h3>Ergebnis</h3>
+<p id="result"></p>
+
+<script>
+    let orders = [];
+
+    function calculate() {
+        let marketLong = parseFloat(document.getElementById('market_long').value);
+        let marketShort = parseFloat(document.getElementById('market_short').value);
+        let limitLong = parseFloat(document.getElementById('limit_long').value);
+        let limitShort = parseFloat(document.getElementById('limit_short').value);
+
+        orders.push({ marketLong, marketShort, limitLong, limitShort });
+        updateResult();
+    }
+
+    function updateResult() {
+        let totalLong = 0;
+        let totalShort = 0;
+
+        orders.forEach(order => {
+            totalLong += order.marketLong + order.limitLong;
+            totalShort += order.marketShort + order.limitShort;
+        });
+
+        let imbalance = totalLong - totalShort;
+
+        if (imbalance > 0) {
+            document.getElementById('result').innerText = "Es gibt einen LONG-Überhang von " + imbalance + " Stücken.";
+        } else if (imbalance < 0) {
+            document.getElementById('result').innerText = "Es gibt einen SHORT-Überhang von " + (-imbalance) + " Stücken.";
+        } else {
+            document.getElementById('result').innerText = "Es gibt keinen Überhang.";
+        }
+    }
+</script>
+
+</body>
+</html>
