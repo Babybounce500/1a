@@ -1,0 +1,20 @@
+Fondspreis MONEY 5 
+Der Fondspreis wird berechnet aus der Addition aller 5 Kurswerte geteilt durch die Anzahl 5.
+
+Fondspreis berechnen
+´
+Fondspreis: 274.32 Euro
+Geld : 270 € / Brief : 280 €
+Aktuelles Datum: 4.8.2023
+
+Aktienname	Aktueller Kurs (Euro)
+MunichRe	
+338,10
+Sartorius	
+372,70
+Rheinmetall	
+259,00
+HannoverRueck	
+191,30
+MTU	
+210,50
