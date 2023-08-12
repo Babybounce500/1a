@@ -1,0 +1,109 @@
+
+<h1>Aktienanleihe Quotierungsrechner</h1>
+
+<label for="basiswert">Basiswert (Wert der Aktie bei Emission):</label>
+<input type="number" id="basiswert" value="100"><br>
+
+<label for="aktuellerKurs">Aktueller Kurs der Aktie:</label>
+<input type="number" id="aktuellerKurs" value="100"><br>
+
+<label for="dividendenanspruch">Dividendenanspruch der Aktie (%):</label>
+<input type="number" id="dividendenanspruch" value="5"><br>
+
+<label for="laufzeit">Laufzeit der Anleihe (Jahre):</label>
+<input type="number" id="laufzeit" value="1"><br>
+
+<label for="volatilitaet">Volatilität der Aktie (%):</label>
+<input type="number" id="volatilitaet" value="15"><br>
+
+<label for="basispreis">Basispreis (Strike) der Anleihe:</label>
+<input type="number" id="basispreis" value="100"><br>
+
+<button onclick="calculateQuotation()">Quotierung berechnen</button>
+
+<h2>Ergebnis:</h2>
+<p id="result">Die Quotierung der Aktienanleihe wird hier angezeigt.</p>
+
+<script>
+    function calculateQuotation() {
+        var basiswert = parseFloat(document.getElementById("basiswert").value);
+        var aktuellerKurs = parseFloat(document.getElementById("aktuellerKurs").value);
+        var dividendenanspruch = parseFloat(document.getElementById("dividendenanspruch").value);
+        var laufzeit = parseFloat(document.getElementById("laufzeit").value);
+        var volatilitaet = parseFloat(document.getElementById("volatilitaet").value);
+        var basispreis = parseFloat(document.getElementById("basispreis").value);
+
+        // Complex quotation calculation considering all input fields
+        var quotation = basiswert + dividendenanspruch - (volatilitaet / 2);
+        if (aktuellerKurs < basispreis) {
+            quotation *= (aktuellerKurs / basispreis);
+        }
+        
+        document.getElementById("result").innerHTML = "Die Quotierung der Aktienanleihe beträgt: " + quotation.toFixed(2) + " %";
+    }
+</script>
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Anleihe Kennzahlen</title>
+</head>
+<body>
+
+<h2>Kennzahlen einer Anleihe</h2>
+
+<form name="anleiheForm">
+    <label for="nennwert">Nennwert:</label>
+    <input type="number" id="nennwert" name="nennwert" value="1000"><br><br>
+
+    <label for="laufzeit">Laufzeit (in Jahren):</label>
+    <input type="number" id="laufzeit" name="laufzeit" value="5"><br><br>
+
+    <label for="zinssatz">Zinssatz (in %):</label>
+    <input type="number" id="zinssatz" name="zinssatz" value="3"><br><br>
+
+    <label for="emissionspreis">Emissionspreis:</label>
+    <input type="number" id="emissionspreis" name="emissionspreis" value="980"><br><br>
+
+    <label for="rueckzahlungspreis">Rückzahlungspreis:</label>
+    <input type="number" id="rueckzahlungspreis" name="rueckzahlungspreis" value="1000"><br><br>
+
+    <label for="waehrung">Währung:</label>
+    <input type="text" id="waehrung" name="waehrung" value="EUR"><br><br>
+
+    <label for="zinszahlungsfrequenz">Zinszahlungsfrequenz (pro Jahr):</label>
+    <input type="number" id="zinszahlungsfrequenz" name="zinszahlungsfrequenz" value="2"><br><br>
+
+    <label for="spread">Spread (in %):</label>
+    <input type="number" id="spread" name="spread" value="1"><br><br>
+
+    <input type="button" value="Anleihe berechnen" onclick="calculateBond()">
+</form>
+
+<p>Effektive Rendite der Anleihe: <span id="yield">-</span></p>
+
+<script>
+    function calculateBond() {
+        // Hier können Sie eine Formel für die Anleiheberechnung basierend auf den oben genannten Kennzahlen hinzufügen.
+        // Als einfaches Beispiel für die effektive Rendite:
+        let nennwert = parseFloat(document.getElementById("nennwert").value);
+        let laufzeit = parseFloat(document.getElementById("laufzeit").value);
+        let zinssatz = parseFloat(document.getElementById("zinssatz").value);
+        let emissionspreis = parseFloat(document.getElementById("emissionspreis").value);
+        let rueckzahlungspreis = parseFloat(document.getElementById("rueckzahlungspreis").value);
+        let zinszahlungsfrequenz = parseFloat(document.getElementById("zinszahlungsfrequenz").value);
+        let spread = parseFloat(document.getElementById("spread").value);
+
+        let zinszahlung = nennwert * zinssatz / 100;
+        let durchschnittlicherJahresertrag = (zinszahlung * zinszahlungsfrequenz + (rueckzahlungspreis - emissionspreis) / laufzeit);
+        let durchschnittlicherJahrespreis = (emissionspreis + rueckzahlungspreis) / 2;
+        let effektiveRendite = durchschnittlicherJahresertrag / durchschnittlicherJahrespreis * 100 + spread;
+
+        document.getElementById("yield").innerText = effektiveRendite.toFixed(2) + "%";
+    }
+</script>
+
+</body>
+</html>
+
