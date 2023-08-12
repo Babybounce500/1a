@@ -1,0 +1,71 @@
+
+<h1>Aktienanleihe Quotierungsrechner</h1>
+
+<label for="basiswert">Basiswert (Wert der Aktie bei Emission):</label>
+<input type="number" id="basiswert" value="100"><br>
+
+<label for="aktuellerKurs">Aktueller Kurs der Aktie:</label>
+<input type="number" id="aktuellerKurs" value="100"><br>
+
+<label for="dividendenanspruch">Dividendenanspruch der Aktie (%):</label>
+<input type="number" id="dividendenanspruch" value="5"><br>
+
+<label for="laufzeit">Laufzeit der Anleihe (Jahre):</label>
+<input type="number" id="laufzeit" value="1"><br>
+
+<label for="volatilitaet">Volatilität der Aktie (%):</label>
+<input type="number" id="volatilitaet" value="15"><br>
+
+<label for="basispreis">Basispreis (Strike) der Anleihe:</label>
+<input type="number" id="basispreis" value="100"><br>
+
+<button onclick="calculateQuotation()">Quotierung berechnen</button>
+
+<h2>Ergebnis:</h2>
+<p id="result">Die Quotierung der Aktienanleihe wird hier angezeigt.</p>
+
+<script>
+    function calculateQuotation() {
+        var basiswert = parseFloat(document.getElementById("basiswert").value);
+        var aktuellerKurs = parseFloat(document.getElementById("aktuellerKurs").value);
+        var dividendenanspruch = parseFloat(document.getElementById("dividendenanspruch").value);
+        var laufzeit = parseFloat(document.getElementById("laufzeit").value);
+        var volatilitaet = parseFloat(document.getElementById("volatilitaet").value);
+        var basispreis = parseFloat(document.getElementById("basispreis").value);
+
+        // Complex quotation calculation considering all input fields
+        var quotation = basiswert + dividendenanspruch - (volatilitaet / 2);
+        if (aktuellerKurs < basispreis) {
+            quotation *= (aktuellerKurs / basispreis);
+        }
+        
+        document.getElementById("result").innerHTML = "Die Quotierung der Aktienanleihe beträgt: " + quotation.toFixed(2) + " %";
+    }
+</script>
+
+<h1>Bezugsverhältnis Rechner (Festes Verhältnis 1:10)</h1>
+
+<label for="aktienkurs">Aktueller Kurs der Aktie:</label>
+<input type="number" id="aktienkurs" value="100"><br>
+
+<label for="nennwertAnleihe">Nennwert der Anleihe:</label>
+<input type="number" id="nennwertAnleihe" value="1000" readonly><br>
+
+<button onclick="calculateFixedSubscriptionRatio()">Bezugsverhältnis berechnen</button>
+
+<h2>Ergebnis:</h2>
+<p id="result">Die Anzahl der Aktien, die der Anleger erhalten würde, wird hier angezeigt.</p>
+
+<script>
+    function calculateFixedSubscriptionRatio() {
+        var aktienkurs = parseFloat(document.getElementById("aktienkurs").value);
+        var nennwertAnleihe = parseFloat(document.getElementById("nennwertAnleihe").value);
+
+        var fixedRatio = 10;  // 1 bond corresponds to 10 stocks
+        var totalStockValue = fixedRatio * aktienkurs;
+        
+        var stocksToReceive = (nennwertAnleihe / totalStockValue) * fixedRatio;
+        
+        document.getElementById("result").innerHTML = "Die Anzahl der Aktien, die der Anleger erhalten würde, beträgt: " + stocksToReceive.toFixed(2) + " Aktien.";
+    }
+</script>

@@ -1,0 +1,65 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dachfonds Berechnung</title>
+    <script type="text/javascript">
+        function calculateDachfonds() {
+            let total = 0;
+            for (let i = 1; i <= 5; i++) {
+                total += parseFloat(document.getElementById("currentPrice" + i).value);
+            }
+            const average = total / 5;
+            document.getElementById("currentDachfondsPrice").value = average.toFixed(2);
+        }
+    </script>
+</head>
+<body>
+    <h2>Fonds Informationen</h2>
+    <table border="1">
+        <tr>
+            <th>Fondsname</th>
+            <th>First Quote</th>
+            <th>Aktueller Kurs</th>
+        </tr>
+        
+        <tr>
+            <td><input type="text" id="fondsName1" placeholder="Fondsname 1"></td>
+            <td><input type="number" id="firstQuote1" placeholder="First Quote 1"></td>
+            <td><input type="number" id="currentPrice1" placeholder="Aktueller Kurs 1"></td>
+        </tr>
+    
+        <tr>
+            <td><input type="text" id="fondsName2" placeholder="Fondsname 2"></td>
+            <td><input type="number" id="firstQuote2" placeholder="First Quote 2"></td>
+            <td><input type="number" id="currentPrice2" placeholder="Aktueller Kurs 2"></td>
+        </tr>
+    
+        <tr>
+            <td><input type="text" id="fondsName3" placeholder="Fondsname 3"></td>
+            <td><input type="number" id="firstQuote3" placeholder="First Quote 3"></td>
+            <td><input type="number" id="currentPrice3" placeholder="Aktueller Kurs 3"></td>
+        </tr>
+    
+        <tr>
+            <td><input type="text" id="fondsName4" placeholder="Fondsname 4"></td>
+            <td><input type="number" id="firstQuote4" placeholder="First Quote 4"></td>
+            <td><input type="number" id="currentPrice4" placeholder="Aktueller Kurs 4"></td>
+        </tr>
+    
+        <tr>
+            <td><input type="text" id="fondsName5" placeholder="Fondsname 5"></td>
+            <td><input type="number" id="firstQuote5" placeholder="First Quote 5"></td>
+            <td><input type="number" id="currentPrice5" placeholder="Aktueller Kurs 5"></td>
+        </tr>
+    
+    </table>
+    <br>
+    <button onclick="calculateDachfonds()">Dachfonds Kurs berechnen</button>
+    <h3>Dachfonds</h3>
+    <label for="currentDachfondsPrice">Aktueller Kurs:</label>
+    <input type="number" id="currentDachfondsPrice" readonly>
+</body>
+</html>

@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Coin Toss Aktienhandel</title>
+</head>
+<body>
+
+<h2>Coin Toss Aktienhandel System</h2>
+
+<h3>Aktiennamen eingeben:</h3>
+<form name="coinTossForm">
+    <input type="text" id="aktie1" placeholder="Aktienname 1"><br><br>
+    <input type="text" id="aktie2" placeholder="Aktienname 2"><br><br>
+    <input type="text" id="aktie3" placeholder="Aktienname 3"><br><br>
+    <input type="text" id="aktie4" placeholder="Aktienname 4"><br><br>
+    <input type="text" id="aktie5" placeholder="Aktienname 5"><br><br>
+    <input type="button" value="Entscheiden" onclick="coinTossDecision()">
+</form>
+
+<h3>Entscheidung:</h3>
+<table border="1">
+    <thead>
+        <tr>
+            <th>Aktienname</th>
+            <th>Trendrichtung</th>
+        </tr>
+    </thead>
+    <tbody id="decisionTable">
+        <!-- Die Entscheidungen werden hier angezeigt -->
+    </tbody>
+</table>
+
+<h3>Einstiegspunkt:</h3>
+<table border="1">
+    <thead>
+        <tr>
+            <th>Aktienname</th>
+            <th>Trendrichtung</th>
+            <th>Kerzenhoch/Kerzentief</th>
+        </tr>
+    </thead>
+    <tbody id="entryTable">
+        <!-- Hier können Sie die Einstiegspunkte eingeben -->
+    </tbody>
+</table>
+
+<script>
+    function coinTossDecision() {
+        let aktien = [];
+        for (let i = 1; i <= 5; i++) {
+            let aktienname = document.getElementById("aktie" + i).value;
+            if (aktienname.trim() !== "") {
+                aktien.push(aktienname);
+            }
+        }
+
+        if (aktien.length === 0) {
+            alert("Bitte geben Sie mindestens einen Aktiennamen ein.");
+            return;
+        }
+
+        let ausgewaehlteAktie = aktien[Math.floor(Math.random() * aktien.length)];
+        let trendrichtung = Math.random() > 0.5 ? "LONG" : "SHORT";
+
+        // Ergebnisse in der Tabelle anzeigen
+        let tbody = document.getElementById("decisionTable");
+        tbody.innerHTML = `<tr><td>${ausgewaehlteAktie}</td><td>${trendrichtung}</td></tr>`;
+
+        // Eingabefeld für Einstiegspunkt hinzufügen
+        let einstiegTbody = document.getElementById("entryTable");
+        let einstiegTyp = trendrichtung === "LONG" ? "Kerzenhoch" : "Kerzentief";
+        einstiegTbody.innerHTML = `<tr><td>${ausgewaehlteAktie}</td><td>${trendrichtung}</td><td><input type="text" placeholder="${einstiegTyp}"></td></tr>`;
+    }
+</script>
+
+</body>
+</html>
