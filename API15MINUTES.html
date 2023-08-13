@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Echtzeitkurse abrufen</title>
+</head>
+<body>
+
+<h1>Echtzeitkurse abrufen</h1>
+
+<label for="ticker">Tickersymbol:</label>
+<input type="text" id="ticker" placeholder="z.B. AAPL.US" />
+<button onclick="getRealTimePrice()">Kurs abrufen</button>
+
+<pre id="price"></pre>
+
+<script>
+    function getRealTimePrice() {
+        const ticker = document.getElementById('ticker').value;
+        const apiKey = '64d7d0670ee1f8.90133693'; // Ihr API-Schlüssel hier
+
+        fetch(`https://eodhistoricaldata.com/api/real-time/${ticker}?fmt=json&api_token=${apiKey}`)
+        .then(response => response.json())
+        .then(data => {
+            const formattedData = JSON.stringify(data, null, 2);
+            document.getElementById('price').innerText = formattedData;
+        })
+        .catch(error => {
+            console.error("Es gab einen Fehler beim Abrufen der Daten:", error);
+        });
+    }
+</script>
+
+</body>
+</html>
